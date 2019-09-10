@@ -3,7 +3,9 @@ import { Text, StyleSheet, View, FlatList, TouchableOpacity, Image, ActivityIndi
 import { connect } from 'react-redux';
 import { addProducts, addSortedProducts } from '../actions/products'
 import axios from 'axios';
-import { BASEURL, SORT_BY_ID, SORT_BY_PRICE, SORT_BY_SIZE, PRICE_IN_DOLLAR } from '../constants/GlobalConstants'
+import { BASE_URL, SORT_BY_ID, SORT_BY_PRICE, SORT_BY_SIZE, PRICE_IN_DOLLAR } from '../constants/GlobalConstants'
+import GridProduct from '../components/gridProduct';
+import FadeInView from '../components/FadeInView';
 class Home extends Component {
 	// header navigation Options
 	static navigationOptions = {
@@ -20,13 +22,15 @@ class Home extends Component {
 			seed: 1,
 			isLoading: true,
 			isFetchingData: false,
+			isSorting: false
 		}
 		this.getProducts(this.state.seed);
 	}
 	// get products to display in grid
 	getProducts = (seed) => {
-		axios.get(BASEURL + "products?_page=" + seed + "&_limit=15")
+		axios.get(BASE_URL + "products?_page=" + seed + "&_limit=15")
 			.then(response => {
+				console.log("END REACH PRODUCTS", response.data);
 				this.props.add(response.data)
 				this.setState({
 					products: this.props.products,
@@ -41,10 +45,12 @@ class Home extends Component {
 	// get all sorted products according to sorting type
 	getSortedProducts = (type) => {
 		this.setState({
-			isLoading: true
+			isLoading: true,
+			isSorting: true
 		})
-		axios.get(BASEURL + "products?_sort=" + type)
+		axios.get(BASE_URL + "products?_sort=" + type)
 			.then(response => {
+				console.log("SORTED PRODUCTS", response.data);
 				this.props.addSorted(response.data);
 				this.setState({
 					products: this.props.productsSorted,
@@ -59,55 +65,22 @@ class Home extends Component {
 
 	_keyExtractor = (item, index) => item.id;
 	// render single product that displayed in grid
+	// render the GridProduct in Pure Component.
 	_renderItem = ({ item, index }) => {
 		return (
-			<View style={styles.itemStyle}>
-				{(index > 0 && index % 20 === 0) ?
-					<Image
-						source={{ uri: BASEURL + "ads/?r=" + Math.floor(Math.random() * 1000) }}
-						style={{
-							height: 100,
-							width: 180,
-							alignSelf: "center"
-						}}
-					/>
-					: null}
-				<View style={styles.textStyle}>
-					<Text>{this.checkDateDifference(item) > 7 ?
-						item.date.slice(4, 15)
-						: this.checkDateDifference(item) + " days ago"}
-					</Text>
-				</View>
-				<View style={styles.textStyle}>
-					<Text style={{ fontSize: item.size }}>
-						{item.face}
-					</Text>
-				</View>
-				<View style={styles.textStyle}>
-					<Text>
-						{PRICE_IN_DOLLAR}{item.price}
-					</Text>
-				</View>
-			</View>
+			<GridProduct item={item} index={index} />
 		)
-	}
-	// check date difference
-	checkDateDifference = (item) => {
-		var today = new Date();
-		var createdOn = new Date(item.date);
-		var msInDay = 24 * 60 * 60 * 1000;
-		createdOn.setHours(0, 0, 0, 0);
-		today.setHours(0, 0, 0, 0)
-		return diff = (+today - +createdOn) / msInDay
 	}
 	// handles load more items.
 	_onEndReached = () => {
-		this.setState({
-			seed: this.state.seed + 1,
-			isFetchingData: true
-		}, () => {
-			this.getProducts(this.state.seed);
-		})
+		if (!this.state.isSorting) {
+			this.setState({
+				seed: this.state.seed + 1,
+				isFetchingData: true
+			}, () => {
+				this.getProducts(this.state.seed);
+			})
+		}
 	}
 	// renders the UI in this Component
 	render() {
@@ -160,9 +133,18 @@ class Home extends Component {
 								onEndReachedThreshold={0.1}
 							/>}
 				</View>
-				{
-					this.state.isFetchingData ? <ActivityIndicator size="large" color="gray" /> : null
-				}
+				<View style={{ backgroundColor: "transparent" }}>
+					{
+						this.state.isFetchingData ?
+							<FadeInView>
+								<View style={{ alignSelf: "center", alignItems: "center", backgroundColor: "transparent", marginBottom: 5 }}>
+									<Text style={{ color: "white", fontFamily: "", fontSize: 16 }}>
+										Loading ...
+									</Text>
+								</View>
+							</FadeInView> : null
+					}
+				</View>
 			</View>
 		)
 	}
