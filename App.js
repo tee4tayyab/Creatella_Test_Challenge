@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -34,7 +34,7 @@ const store = configureStore()
 const App = () => {
   return (
     <Provider store={store}>
-    <AppNavigation/>
+      <AppNavigation />
     </Provider>
   );
 };
