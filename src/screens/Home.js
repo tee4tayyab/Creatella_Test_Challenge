@@ -210,12 +210,16 @@ const styles = StyleSheet.create({
 	}
 })
 
+// funtion to retrieve Data from store by Connecting to store.
+
 const mapStateToProps = state => {
 	return {
 		products: state.products.products,
 		productsSorted: state.productsSorted.products
 	}
 }
+
+// funtion to dispatch Data to Store Via Reducer Function.
 
 const mapDispatchToProps = dispatch => {
 	return {
@@ -227,5 +231,7 @@ const mapDispatchToProps = dispatch => {
 		}
 	}
 }
+
+// connect REDUX STORE to React Component.
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
