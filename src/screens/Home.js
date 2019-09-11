@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { Text, StyleSheet, View, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux';
 import { addProducts, addSortedProducts } from '../actions/products'
 import axios from 'axios';
-import { BASE_URL, SORT_BY_ID, SORT_BY_PRICE, SORT_BY_SIZE, PRICE_IN_DOLLAR } from '../constants/GlobalConstants'
+import { BASE_URL, SORT_BY_ID, SORT_BY_PRICE, SORT_BY_SIZE } from '../constants/GlobalConstants'
 import GridProduct from '../components/gridProduct';
 import FadeInView from '../components/FadeInView';
 class Home extends Component {
@@ -22,7 +22,8 @@ class Home extends Component {
 			seed: 1,
 			isLoading: true,
 			isFetchingData: false,
-			isSorting: false
+			isSorting: false,
+			endOfCatalogue: false
 		}
 		this.getProducts(this.state.seed);
 	}
@@ -31,12 +32,20 @@ class Home extends Component {
 		axios.get(BASE_URL + "products?_page=" + seed + "&_limit=15")
 			.then(response => {
 				console.log("END REACH PRODUCTS", response.data);
-				this.props.add(response.data)
-				this.setState({
-					products: this.props.products,
-					isLoading: false,
-					isFetchingData: false
-				})
+				if (response.data.length == 0) {
+					this.setState({
+						endOfCatalogue: true,
+						isLoading: false,
+						isFetchingData: false
+					})
+				} else {
+					this.props.add(response.data)
+					this.setState({
+						products: this.props.products,
+						isLoading: false,
+						isFetchingData: false
+					})
+				}
 			})
 			.catch(error => {
 				console.log("error", error);
@@ -54,7 +63,8 @@ class Home extends Component {
 				this.props.addSorted(response.data);
 				this.setState({
 					products: this.props.productsSorted,
-					isLoading: false
+					isLoading: false,
+					endOfCatalogue: true
 				})
 
 			})
@@ -130,15 +140,25 @@ class Home extends Component {
 								renderItem={this._renderItem}
 								numColumns={2}
 								onEndReached={this._onEndReached}
-								onEndReachedThreshold={0.1}
+								onEndReachedThreshold={this.state.endOfCatalogue ? 0 : 0.1}
+								// List footer for End of Catalogue
+								ListFooterComponent={this.state.endOfCatalogue ?
+
+									<View style={styles.footer}>
+										<Text style={styles.footerText}>
+											~ end of catalogue ~
+										</Text>
+									</View>
+									: null}
 							/>}
 				</View>
-				<View style={{ backgroundColor: "transparent" }}>
+				{/* Loading Animation "Loading ..." */}
+				<View style={styles.transparentBackground}>
 					{
 						this.state.isFetchingData ?
 							<FadeInView>
-								<View style={{ alignSelf: "center", alignItems: "center", backgroundColor: "transparent", marginBottom: 5 }}>
-									<Text style={{ color: "white", fontFamily: "", fontSize: 16 }}>
+								<View style={styles.footer}>
+									<Text style={styles.footerText}>
 										Loading ...
 									</Text>
 								</View>
@@ -157,18 +177,17 @@ const styles = StyleSheet.create({
 	}, listStyle: {
 		flex: 1,
 		justifyContent: "center",
-	}, itemStyle: {
-		flex: 1,
-		flexDirection: "column",
-		backgroundColor: "white",
-		marginHorizontal: 10,
-		marginVertical: 5,
-		borderRadius: 10,
-		overflow: "hidden"
-	}, textStyle: {
+	}, footer: {
 		alignSelf: "center",
-		textAlign: "center",
-		flex: 1,
+		alignItems: "center",
+		backgroundColor: "transparent",
+		marginBottom: 5
+	}, footerText: {
+		color: "white",
+		fontFamily: ""
+		, fontSize: 16
+	}, transparentBackground: {
+		backgroundColor: "transparent"
 	}, sortButtons: {
 		flexDirection: "row",
 		marginHorizontal: 10,
