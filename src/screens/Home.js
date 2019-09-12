@@ -156,13 +156,17 @@ class Home extends Component {
 				<View style={styles.transparentBackground}>
 					{
 						this.state.isFetchingData ?
-							<FadeInView>
-								<View style={styles.footer}>
-									<Text style={styles.footerText}>
-										Loading ...
-									</Text>
-								</View>
-							</FadeInView> : null
+
+							<View style={styles.footer}>
+								<Text style={styles.footerText}>
+									Loading </Text>
+								<FadeInView>
+									<Text style={styles.footerDots}>
+										...
+										</Text>
+								</FadeInView>
+							</View>
+							: null
 					}
 				</View>
 			</View>
@@ -181,11 +185,19 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 		alignItems: "center",
 		backgroundColor: "transparent",
+		alignContent: "center",
+		justifyContent: 'center',
+		flexDirection: "row",
 		marginBottom: 5
 	}, footerText: {
 		color: "white",
 		fontFamily: ""
 		, fontSize: 16
+	}, footerDots: {
+		color: "white",
+		fontFamily: ""
+		, fontSize: 20,
+		textAlign: "center"
 	}, transparentBackground: {
 		backgroundColor: "transparent"
 	}, sortButtons: {
