@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },imageView : {
         height: 100,
-        width: 180,
+        width: "100%",
         alignSelf: "center"
     }
 })

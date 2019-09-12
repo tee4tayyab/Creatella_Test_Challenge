@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, FlatList, TouchableOpacity, ActivityIndicator }
 import { connect } from 'react-redux';
 import { addProducts, addSortedProducts } from '../actions/products'
 import axios from 'axios';
-import { BASE_URL, SORT_BY_ID, SORT_BY_PRICE, SORT_BY_SIZE } from '../constants/GlobalConstants'
+import { BASE_URL, SORT_BY_ID, SORT_BY_PRICE, SORT_BY_SIZE, NUM_OF_COLUMNS } from '../constants/GlobalConstants'
 import GridProduct from '../components/gridProduct';
 import FadeInView from '../components/FadeInView';
 class Home extends Component {
@@ -138,7 +138,7 @@ class Home extends Component {
 								extraData={this.state}
 								keyExtractor={this._keyExtractor}
 								renderItem={this._renderItem}
-								numColumns={2}
+								numColumns={NUM_OF_COLUMNS}
 								onEndReached={this._onEndReached}
 								onEndReachedThreshold={this.state.endOfCatalogue ? 0 : 0.1}
 								// List footer for End of Catalogue

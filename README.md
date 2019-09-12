@@ -19,7 +19,7 @@ To run React Native project
 
 - Server must be running in order to view products.
 - Run command "ipconfig" and copy IPv4 address
-- Change the BASE_URL in the file src/constants/GlobalConstants and replace IPv4 address with IP_Address in the Url.
+- Change the *BASE_URL* in the file src/constants/GlobalConstants and replace IPv4 address with IP_Address in the Url.
 - Open another command line interface.
 - Run command "react-native run-android/ios" to run React Native project.
 
@@ -31,6 +31,7 @@ Features
 - Load more products when user reaches near the end of the list.
 - Loading ... animation shown while loading the next batch of products.
 - When there are no more products in the list, there is a footer that shows "~ end of catalogue ~"
+- To change the number of columns, change the *NUM_OF_COLUMNS* in the file src/constants/GlobalConstants.
 
 ### Ads
 
